@@ -7,7 +7,7 @@
 #include <random>
 
 const double EPSILON = 1e-6;
-
+/*
 std::array<bool, 8> GetMask(__mmask8 mask) {
   std::array<bool, 8> bits;
   for (int i = 0; i < 8; ++i) {
@@ -16,6 +16,7 @@ std::array<bool, 8> GetMask(__mmask8 mask) {
   }
   return bits;
 }
+*/
 
 void Check_cpp(const std::array<double, 8> actual,
                const std::array<double, 8> expected) {
@@ -67,7 +68,6 @@ TEST_CASE ("Functions") {
   }
   CHECK(false);
 
-
 }
 */
 
@@ -86,26 +86,26 @@ TEST_CASE("Simple For AVX") {
   NormalBox_avx box = {3.0, 2.0};
   Check_avx(a, Hausdorff_AVX(box, pack));
 }
- 
+
 TEST_CASE("Random") {
   std::mt19937 gen{12345678};
   std::uniform_real_distribution<double> PackCord(-10.0, 10.0);
   std::uniform_real_distribution<double> BoxDim(0.0, 4.0);
 
   std::array<double, 8> pack_CPP_X, pack_CPP_Y, pack_AVX_X, pack_AVX_Y;
-  for(int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) {
     pack_CPP_X[i] = PackCord(gen);
     pack_CPP_Y[i] = PackCord(gen);
     pack_AVX_X[i] = pack_CPP_X[i];
     pack_AVX_Y[i] = pack_CPP_Y[i];
   }
-  PackedPoint_cpp packc = {pack_CPP_X, pack_CPP_Y};
+  PackedPoint_cpp pack_CPP = {pack_CPP_X, pack_CPP_Y};
   __m512d X = _mm512_loadu_pd(pack_AVX_X.data());
   __m512d Y = _mm512_loadu_pd(pack_AVX_Y.data());
-  PackedPoint_avx  packa = {X, Y};
-  NormalBox_cpp boxc = {BoxDim(gen), BoxDim(gen)};
-  NormalBox_avx boxa;
-  boxa.w = boxc.w;
-  boxa.h = boxc.h;
-  Check_avx(Hausdorff_CPP(boxc, packc), Hausdorff_AVX(boxa, packa));
+  PackedPoint_avx pack_AVX = {X, Y};
+  NormalBox_cpp box_CPP = {BoxDim(gen), BoxDim(gen)};
+  NormalBox_avx box_AVX;
+  box_AVX.Half_Width = box_CPP.Half_Width;
+  box_AVX.Half_Height = box_CPP.Half_Height;
+  Check_avx(Hausdorff_CPP(box_CPP, pack_CPP), Hausdorff_AVX(box_AVX, pack_AVX));
 }
