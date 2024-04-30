@@ -6,7 +6,7 @@
 #include <random>
 
 /*
-TEST_CASE("Hahahaha") {
+TEST_CASE("Simple") {
     PackedPoint_cpp pack = {{5.0, 7.0, 6.0, 9.0, -4.0, -2.0, 0.0, 0.0},
                           {4.0, 6.0, 1.0, 1.0, -6.0, 1.0, 0.0, 0.0}};
     NormalBox_cpp box = {3.0, 2.0};
@@ -19,7 +19,7 @@ TEST_CASE("Hahahaha") {
     };
 
     BENCHMARK_ADVANCED("CPP")(Catch::Benchmark::Chronometer meter) {
-        
+
         meter.measure([&] { return Hausdorff_CPP(box, pack); });
     };
 }
@@ -31,7 +31,7 @@ TEST_CASE("Random") {
   std::uniform_real_distribution<double> BoxDim(300.0, 500.0);
 
   std::array<double, 8> pack_CPP_X, pack_CPP_Y, pack_AVX_X, pack_AVX_Y;
-  for(int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) {
     pack_CPP_X[i] = PackCord(gen);
     pack_CPP_Y[i] = PackCord(gen);
     pack_AVX_X[i] = pack_CPP_X[i];
@@ -40,19 +40,18 @@ TEST_CASE("Random") {
   PackedPoint_cpp packc = {pack_CPP_X, pack_CPP_Y};
   __m512d X = _mm512_loadu_pd(pack_AVX_X.data());
   __m512d Y = _mm512_loadu_pd(pack_AVX_Y.data());
-  PackedPoint_avx  packa = {X, Y};
+  PackedPoint_avx packa = {X, Y};
   NormalBox_cpp boxc = {BoxDim(gen), BoxDim(gen)};
   NormalBox_avx boxa;
   boxa.w = boxc.w;
   boxa.h = boxc.h;
 
-      BENCHMARK_ADVANCED("AVX512")(Catch::Benchmark::Chronometer meter) {
-        meter.measure([&] { return Hausdorff_AVX(boxa, packa); });
-    };
+  BENCHMARK_ADVANCED("AVX512")(Catch::Benchmark::Chronometer meter) {
+    meter.measure([&] { return Hausdorff_AVX(boxa, packa); });
+  };
 
-    BENCHMARK_ADVANCED("CPP")(Catch::Benchmark::Chronometer meter) {
-        
-        meter.measure([&] { return Hausdorff_CPP(boxc, packc); });
-    };
-  
+  BENCHMARK_ADVANCED("CPP")(Catch::Benchmark::Chronometer meter) {
+
+    meter.measure([&] { return Hausdorff_CPP(boxc, packc); });
+  };
 }
