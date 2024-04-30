@@ -4,7 +4,7 @@ cc_library(
     name = "hausdorff",
     hdrs = ["hausdorff_cpp.h",
             "hausdorff_avx.h",
-            "functions.h",
+            "functions_avx.h",
             "structures_avx.h",
             "structures_cpp.h"        
     ],
@@ -33,7 +33,7 @@ cc_test(
 )
 
 cc_test(
-    name = "bench_main",
+    name = "benchmark_main",
     # size = "small",
     srcs = ["bench.cpp"],
     deps = [
@@ -44,7 +44,6 @@ cc_test(
         "-m64",
         "-mavx512f",
         "-mavx512er",
-        "-O3",
-    ],
+        "-O3"
+    ]
 )
-
